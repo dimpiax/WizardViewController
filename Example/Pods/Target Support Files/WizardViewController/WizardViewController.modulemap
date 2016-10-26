@@ -1,0 +1,6 @@
+framework module WizardViewController {
+  umbrella header "WizardViewController-umbrella.h"
+
+  export *
+  module * { export * }
+}

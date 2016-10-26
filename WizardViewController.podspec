@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'WizardViewController'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of WizardViewController.'
+  s.summary          = 'An abstract view controller for sliding pages.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,15 +18,16 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+Build your tutorial / description / informative screens by trivial approach.
+Setup controller view assets and be flexible with page delegation.
                        DESC
 
-  s.homepage         = 'https://github.com/<GITHUB_USERNAME>/WizardViewController'
+  s.homepage         = 'https://github.com/dimpiax/WizardViewController'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Pilipenko Dima' => 'dimpiax@gmail.com' }
   s.source           = { :git => 'https://github.com/<GITHUB_USERNAME>/WizardViewController.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.social_media_url = 'https://twitter.com/dimpiax'
 
   s.ios.deployment_target = '8.0'
 

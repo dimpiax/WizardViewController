@@ -1,0 +1,16 @@
+PODS:
+  - WizardViewController (0.1.0)
+
+DEPENDENCIES:
+  - WizardViewController (from `../`)
+
+EXTERNAL SOURCES:
+  WizardViewController:
+    :path: ../
+
+SPEC CHECKSUMS:
+  WizardViewController: 74b02795ae3c899d5909b80ae24eecf50230d157
+
+PODFILE CHECKSUM: 1d0a942b811e45052ac4b9ad038a1da258a4993e
+
+COCOAPODS: 1.1.0.rc.2
