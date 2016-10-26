@@ -17,6 +17,7 @@ class ViewController: UIViewController {
         
         _wizardVC = WizardViewController()
         
+        // setup page indicators
         _wizardVC.pageIndicatorColors = { currentPageIndex in
             let value: UIColor
             switch currentPageIndex {
@@ -27,27 +28,35 @@ class ViewController: UIViewController {
             return (nil, value)
         }
         
+        // set view controllers
         _wizardVC.setViewControllers([A(), A(), A(), A()])
+        
+        // or
+        
+        // set views
+        _wizardVC.setViews([B(), B(), B()])
         
         addChildViewController(_wizardVC)
         _wizardVC.didMove(toParentViewController: self)
         view.addSubview(_wizardVC.view)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        print(_wizardVC.view.frame)
-    }
-
     deinit {
+        // clear resources after usage
         _wizardVC.clear()
         _wizardVC = nil
+    }
+}
+
+final class B: UIControl {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        backgroundColor = UIColor(red: CGFloat(randOf(limit: 255))/255, green: CGFloat(randOf(limit: 255))/255, blue: CGFloat(randOf(limit: 255))/255, alpha: CGFloat(randOf(limit: 255))/255)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

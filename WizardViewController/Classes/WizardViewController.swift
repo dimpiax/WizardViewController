@@ -20,16 +20,19 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
     
     public var currentPageIndex: Int? = nil {
         willSet {
-            print("will \(newValue) was: \(currentPageIndex)")
-            guard let vcs = _viewControllers, currentPageIndex != newValue else { return }
-            
-            if let curIndex = currentPageIndex {
-                (vcs[curIndex] as? WizardPageContent)?.pageWillDisappear(animated: true)
+            guard let arr = getContentArray() else {
+                return
             }
             
-            if let nextIndex = newValue {
-                addViewAndSiblings(nextIndex)
-                (vcs[nextIndex] as? WizardPageContent)?.pageWillAppear(animated: true)
+            if currentPageIndex != newValue {
+                if let curIndex = currentPageIndex {
+                    arr[curIndex]?.pageWillDisappear(animated: true)
+                }
+                
+                if let nextIndex = newValue {
+                    addViewAndSiblings(nextIndex)
+                    arr[nextIndex]?.pageWillAppear(animated: true)
+                }
             }
         }
         didSet {
@@ -82,10 +85,11 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
     
     public func setViewControllers(_ value: [UIViewController]) {
         _viewControllers = value
-        _views = [UIView?](repeating: nil, count: _viewControllers!.count)
+        _views = [UIView?](repeating: nil, count: value.count)
     }
     
     public func setViews(_ value: [UIView]) {
+        _viewControllers = nil
         _views = value
         
         reloadData()
@@ -99,30 +103,25 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
     // DELEGATES
     // * UIScrollViewDelegate
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let vcs = _viewControllers else {
+        guard let views = _views else {
             return
         }
         
-        print("check")
-        //print("w: \(scrollView.bounds.width) x: \(scrollView.contentOffset.x)")
-        var x = scrollView.contentOffset.x
-        //print("_views: \(_views)")
+        let x = scrollView.contentOffset.x
+        
         var nilCount = 0
         for index in 0..<currentPageIndex! {
             if _views[index] == nil {
                 nilCount += 1
             }
         }
-        print("nilCount: \(nilCount)")
         
         let pagesCountOffset = CGFloat(nilCount)
         let pagesWidthOffset = pagesCountOffset * scrollView.bounds.width
-        print("pagesWidthOffset: \(pagesWidthOffset)")
         
         var pageIndex = Int(round((x + pagesWidthOffset) / scrollView.bounds.width))
         
-        pageIndex = max(0, min(vcs.count-1, pageIndex)) // normalize
-        print("define: \(pageIndex)")
+        pageIndex = max(0, min(views.count-1, pageIndex)) // normalize
         currentPageIndex = pageIndex
         
         if let f = scrollViewDidDragging {
@@ -158,9 +157,8 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
             }
         }
         
-        // add current views to scroll view
+        // remove views from scroll view
         _scrollView.subviews.forEach { $0.removeFromSuperview() }
-        //_views?.forEach { _scrollView.addSubview($0) }
         
         // refresh page
         currentPageIndex = defaultPageIndex
@@ -200,29 +198,42 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
     }
     
     fileprivate func addViewAndSiblings(_ index: Int) {
-        guard let vcs = _viewControllers else {
-            return
-        }
-        
         var isNeedLayout = false
-        for directionIndex in [-1, 0, 1] {
-            let curIndex = index+directionIndex
-            print("index: \(index) curIndex: \(curIndex)")
-            if curIndex >= 0 && curIndex < vcs.count {
-                let vc = vcs[curIndex]
-                
-                if vc.parent == nil {
-                    addChildViewController(vc)
-                    vc.didMove(toParentViewController: self)
-                }
-                
-                if vc.isViewLoaded == false || vc.view.superview == nil {
-                    let view = vc.view
-                    print("curIndex: \(curIndex)")
-                    _scrollView.insertSubview(view!, at: curIndex)
-                    _views[curIndex] = view
+        
+        if let vcs = _viewControllers {
+            for directionIndex in [-1, 0, 1] {
+                let curIndex = index+directionIndex
+                if curIndex >= 0 && curIndex < vcs.count {
+                    let vc = vcs[curIndex]
                     
-                    isNeedLayout = true
+                    if vc.parent == nil {
+                        addChildViewController(vc)
+                        vc.didMove(toParentViewController: self)
+                    }
+                    
+                    if vc.isViewLoaded == false || vc.view.superview == nil {
+                        let view = vc.view
+                        _scrollView.insertSubview(view!, at: curIndex)
+                        _views[curIndex] = view
+                        
+                        isNeedLayout = true
+                    }
+                }
+            }
+        }
+        else if let views = _views {
+            for directionIndex in [-1, 0, 1] {
+                let curIndex = index+directionIndex
+                
+                if curIndex >= 0 && curIndex < views.count {
+                    guard let view = views[curIndex] else {
+                        continue
+                    }
+                    
+                    if view.superview == nil {
+                        _scrollView.insertSubview(view, at: curIndex)
+                        isNeedLayout = true
+                    }
                 }
             }
         }
@@ -254,6 +265,18 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
         
         _pageControl.pageIndicatorTintColor = colors.common
         _pageControl.currentPageIndicatorTintColor = colors.current
+    }
+    
+    fileprivate func getContentArray() -> [WizardPageContent?]? {
+        var contentArray: [WizardPageContent?]?
+        if let vcs = _viewControllers {
+            contentArray = vcs.map { $0 as? WizardPageContent }
+        }
+        else if let views = _views {
+            contentArray = views.map { $0 as? WizardPageContent }
+        }
+        
+        return contentArray
     }
     
     deinit {
