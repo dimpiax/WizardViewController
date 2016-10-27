@@ -16,29 +16,62 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         _wizardVC = WizardViewController()
+        _wizardVC.modalTransitionStyle = .coverVertical
+        _wizardVC.modalPresentationStyle = .overCurrentContext
         
         // setup page indicators
-        _wizardVC.pageIndicatorColors = { currentPageIndex in
+        _wizardVC.pageIndicatorColors = {[unowned self] currentPageIndex in
             let value: UIColor
-            switch currentPageIndex {
-                case 1: value = .darkGray
-                case 2: value = .gray
-                default: value = .black
+
+            if let color = self._wizardVC.getView(index: currentPageIndex)?.backgroundColor {
+                var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+                color.getRed(&r, green: &g, blue: &b, alpha: &a)
+                
+                // inverse color
+                value = UIColor(red: 1-r, green: 1-g, blue: 1-b, alpha: 1)
             }
+            else {
+                switch currentPageIndex {
+                    case 1: value = .darkGray
+                    case 2: value = .gray
+                    default: value = .black
+                }
+
+            }
+
             return (nil, value)
         }
-        
-        // set view controllers
-        _wizardVC.setViewControllers([A(), A(), A(), A()])
-        
-        // or
         
         // set views
         _wizardVC.setViews([B(), B(), B()])
         
-        addChildViewController(_wizardVC)
-        _wizardVC.didMove(toParentViewController: self)
-        view.addSubview(_wizardVC.view)
+        // or
+        
+        // set view controllers
+        _wizardVC.setViewControllers([A(), A(), A(), A()])
+        
+        // set custom view on top subview
+        let button = UIButton(type: .custom)
+        button.setTitle("skip", for: .normal)
+        button.sizeToFit()
+        button.frame.origin.y = view.bounds.height - button.bounds.height - 50
+        button.frame.size.width = view.bounds.width
+        button.addTarget(self, action: #selector(closeTutorial), for: .touchUpInside)
+        
+        _wizardVC.setTop(view: button)
+        
+        // run present after timeout
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(showTutorial), userInfo: nil, repeats: false)
+    }
+    
+    func showTutorial() {
+        present(_wizardVC, animated: true, completion: nil)
+    }
+    
+    func closeTutorial() {
+        _wizardVC.dismiss(animated: true) {[unowned self] in
+            self._wizardVC = nil
+        }
     }
     
     deinit {
@@ -68,7 +101,7 @@ final class A: UIViewController, WizardPageContent {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(red: CGFloat(randOf(limit: 255))/255, green: CGFloat(randOf(limit: 255))/255, blue: CGFloat(randOf(limit: 255))/255, alpha: CGFloat(randOf(limit: 255))/255)
+        view.backgroundColor = UIColor(red: CGFloat(randOf(limit: 255))/255, green: CGFloat(randOf(limit: 255))/255, blue: CGFloat(randOf(limit: 255))/255, alpha: 1)
         
         label.textAlignment = .center
         view.addSubview(label)

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		01C9F10937F826615941EA4031C1BC75 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
 		02DCDDDA0AB403B393B0C0069D8FD0A1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
+		045944161DC26A26001B9FF3 /* UITopSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0454DF951DC261A900C6314D /* UITopSubview.swift */; };
+		045944191DC27968001B9FF3 /* Decider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045944171DC27939001B9FF3 /* Decider.swift */; };
 		4B1E0F45C8673432B52C94A3566B8669 /* Pods-WizardViewController_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 556E5EF106108DE9763EE51CBB88B87B /* Pods-WizardViewController_Tests-dummy.m */; };
 		522CE93F5CA4CF70CD0FB6471162422F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
 		79E99FA51B29F2AF724896C55396460D /* WizardPageContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7764A57917806AE50B518B44E760C /* WizardPageContent.swift */; };
@@ -32,6 +34,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0454DF951DC261A900C6314D /* UITopSubview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITopSubview.swift; sourceTree = "<group>"; };
+		045944171DC27939001B9FF3 /* Decider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decider.swift; sourceTree = "<group>"; };
 		049B7D7516F9C030293AC764C40AB99D /* Pods-WizardViewController_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WizardViewController_Example-frameworks.sh"; sourceTree = "<group>"; };
 		066EA570E756A82A14D7956BFB068E9E /* WizardViewController-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "WizardViewController-prefix.pch"; sourceTree = "<group>"; };
 		0E920415A063E190C590ACA057645611 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -160,6 +164,8 @@
 				9E630C0D0D311BF1BB89F9BDE0E42E21 /* ScrollBounceAnimatable.swift */,
 				E3F7764A57917806AE50B518B44E760C /* WizardPageContent.swift */,
 				BA9774B22BB2BE9F7C34F446D9E56617 /* WizardViewController.swift */,
+				0454DF951DC261A900C6314D /* UITopSubview.swift */,
+				045944171DC27939001B9FF3 /* Decider.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -318,6 +324,11 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0700;
+				TargetAttributes = {
+					61BAC6B2B5E088E69B46E799EF4C8334 = {
+						LastSwiftMigration = 0800;
+					};
+				};
 			};
 			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -345,7 +356,9 @@
 			files = (
 				E898B8F3FE959299B63BCB5C5AB6AE2F /* ScrollBounceAnimatable.swift in Sources */,
 				79E99FA51B29F2AF724896C55396460D /* WizardPageContent.swift in Sources */,
+				045944191DC27968001B9FF3 /* Decider.swift in Sources */,
 				8C0AEE2880FF3161568FA888F7ED01FE /* WizardViewController-dummy.m in Sources */,
+				045944161DC26A26001B9FF3 /* UITopSubview.swift in Sources */,
 				99EC623402717B6EA35CD084F0B12DD0 /* WizardViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,6 +460,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E7818F0E88BFD58B810766BD8E6A7F71 /* Pods-WizardViewController_Example.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -472,6 +486,7 @@
 				PRODUCT_NAME = Pods_WizardViewController_Example;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -601,6 +616,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D684CE60C9864BC1D474657B866AFF9F /* Pods-WizardViewController_Example.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -627,6 +643,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

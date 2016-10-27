@@ -10,6 +10,11 @@ import Foundation
 import UIKit
 
 public final class WizardViewController: UIViewController, UIScrollViewDelegate, ScrollBounceAnimatable {
+    struct Deciders {
+        let view: Decider<UIView>
+        let viewController: Decider<UIViewController>
+    }
+    
     // * ScrollBounceAnimatable
     public var scrollViewDidDragging: ((_ percent: CGFloat, _ direction: CGPoint?) -> Void)?
     public var scrollViewDidEndDragging: ((_ percent: CGFloat, _ direction: CGPoint?) -> Void)?
@@ -47,6 +52,10 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
     fileprivate var _viewControllers: [UIViewController]?
     fileprivate var _views: [UIView?]!
     
+    fileprivate var _topSubview: UIView?
+    fileprivate var _deciders: Deciders?
+    
+    
     override public func loadView() {
         super.loadView()
         
@@ -81,6 +90,10 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
                 _scrollView.contentOffset.x = view.frame.minX
             }
         }
+        
+        if let topSubview = _topSubview {
+            topSubview.frame = view.frame
+        }
     }
     
     public func setViewControllers(_ value: [UIViewController]) {
@@ -95,9 +108,29 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
         reloadData()
     }
     
+    public func setTop(view value: UIView) {
+        let d = initDeciders()
+        d.viewController.remove()
+        d.view.assign(value)
+    }
+    
+    public func setTop(viewController value: UIViewController) {
+        let d = initDeciders()
+        d.view.remove()
+        d.viewController.assign(value)
+    }
+    
     public func clear() {
         _viewControllers = nil
         _views = nil
+    }
+    
+    public func getViewController(index: Int) -> UIViewController? {
+        return _viewControllers?[index]
+    }
+    
+    public func getView(index: Int) -> UIView? {
+        return _views[index]
     }
     
     // DELEGATES
@@ -143,19 +176,7 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
         
         currentPageIndex = nil
         
-        childViewControllers.forEach {
-            $0.removeFromParentViewController()
-            $0.didMove(toParentViewController: nil)
-        }
-        _viewControllers?.forEach { vc in
-            vc.removeFromParentViewController()
-            vc.didMove(toParentViewController: nil)
-            
-            // remove view from superview if loaded, it's for optimization like in `addViewAndSiblings`
-            if vc.isViewLoaded {
-                vc.view.removeFromSuperview()
-            }
-        }
+        _viewControllers?.forEach(removeViewController)
         
         // remove views from scroll view
         _scrollView.subviews.forEach { $0.removeFromSuperview() }
@@ -165,6 +186,12 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
         
         layoutPageControl()
         layoutScrollView()
+    }
+    
+    fileprivate func initDeciders() -> Deciders {
+        guard _deciders == nil else { return _deciders! }
+        _deciders = Deciders(view: UIViewDecider(value: self), viewController: UIViewControllerDecider(value: self))
+        return _deciders!
     }
     
     fileprivate func layoutScrollView() {
@@ -279,14 +306,53 @@ public final class WizardViewController: UIViewController, UIScrollViewDelegate,
         return contentArray
     }
     
+    fileprivate func removeViewController(_ vc: UIViewController) {
+        vc.removeFromParentViewController()
+        vc.didMove(toParentViewController: nil)
+        
+        // remove view from superview if loaded, it's for optimization like in `addViewAndSiblings`
+        if vc.isViewLoaded {
+            vc.view.removeFromSuperview()
+        }
+    }
+    
     deinit {
         if let curIndex = currentPageIndex {
             (_viewControllers?[curIndex] as? WizardPageContent)?.pageWillDisappear(animated: true)
         }
         
+        _deciders = nil
+        _topSubview = nil
         _scrollView = nil
         _pageControl = nil
         
         _views = nil
+    }
+}
+
+extension WizardViewController: Deciderable {
+    func addViewController(_ value: UIViewController) {
+        addChildViewController(value)
+        value.didMove(toParentViewController: self)
+        addToTopSubview(value.view)
+    }
+    
+    func addView(_ value: UIView) {
+        addToTopSubview(value)
+    }
+    
+    private func addToTopSubview(_ value: UIView) {
+        var subview: UIView
+        if _topSubview == nil {
+            subview = UITopSubview()
+            _topSubview = subview
+            
+            view.addSubview(subview)
+        }
+        else {
+            subview = _topSubview!
+        }
+        
+        subview.addSubview(value)
     }
 }

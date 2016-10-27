@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WizardViewController'
-  s.version          = '1.0.0'
+  s.version          = '1.1.0'
   s.summary          = 'An abstract view controller for sliding pages.'
 
 # This description is used to generate tags and improve search results.
@@ -20,31 +20,53 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Build your tutorial / description / informative screens by trivial approach.
 Setup visual assets and be flexible with page delegation.
+Put special views or controls on top subview, which is not scrolling.
 
 ```swift
-let wizardVC = WizardViewController()
+_wizardVC = WizardViewController()
+_wizardVC.modalTransitionStyle = .coverVertical
+_wizardVC.modalPresentationStyle = .overCurrentContext
 
 // setup page indicators
-wizardVC.pageIndicatorColors = { currentPageIndex in
-let value: UIColor
-switch currentPageIndex {
-case 1: value = .darkGray
-case 2: value = .gray
-default: value = .black
+_wizardVC.pageIndicatorColors = {[unowned self] currentPageIndex in
+    let value: UIColor
+
+    if let color = self._wizardVC.getView(index: currentPageIndex)?.backgroundColor {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+
+        // inverse color
+        value = UIColor(red: 1-r, green: 1-g, blue: 1-b, alpha: 1)
+    }
+    else {
+        switch currentPageIndex {
+            case 1: value = .darkGray
+            case 2: value = .gray
+            default: value = .black
+        }
+
+    }
+
+    return (nil, value)
 }
 
-return (nil, value)
-}
+// set views
+_wizardVC.setViews([B(), B(), B()])
+
+// or
 
 // set view controllers
-wizardVC.setViewControllers([A(), A(), A(), A()])
-// or
-// set views
-wizardVC.setViews([B(), B(), B()])
+_wizardVC.setViewControllers([A(), A(), A(), A()])
 
-addChildViewController(_wizardVC)
-_wizardVC.didMove(toParentViewController: self)
-view.addSubview(_wizardVC.view)
+// set custom view on top subview
+let button = UIButton(type: .custom)
+button.setTitle("skip", for: .normal)
+button.sizeToFit()
+button.frame.origin.y = view.bounds.height - button.bounds.height - 50
+button.frame.size.width = view.bounds.width
+button.addTarget(self, action: #selector(closeTutorial), for: .touchUpInside)
+
+_wizardVC.setTop(view: button)
 ```
                        DESC
 
