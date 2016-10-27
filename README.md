@@ -10,6 +10,8 @@ Build your tutorial / description / informative screens by trivial approach.
 Setup visual assets and be flexible with page delegation.
 Put special views or controls on top subview, which is not scrolling.
 
+<img src=thumbnail.png width=25% height=25% />
+
 ## Example
 
 ```swift
@@ -57,8 +59,6 @@ button.addTarget(self, action: #selector(closeTutorial), for: .touchUpInside)
 
 _wizardVC.setTop(view: button)
 ```
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Installation
 
