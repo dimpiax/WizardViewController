@@ -41,7 +41,7 @@ class UIViewDecider<T>: Decider<T> where Decider<T>.Key: UIView {
     }
     
     override func remove() {
-        if let view = assigned as? UIView {
+        if let view = assigned {
             view.removeFromSuperview()
         }
         
@@ -62,7 +62,7 @@ class UIViewControllerDecider<T>: Decider<T> where Decider<T>.Key: UIViewControl
     }
     
     override func remove() {
-        if let vc = assigned as? UIViewController {
+        if let vc = assigned {
             vc.removeFromParentViewController()
             vc.didMove(toParentViewController: nil)
             
